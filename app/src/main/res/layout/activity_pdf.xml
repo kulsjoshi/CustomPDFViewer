@@ -30,9 +30,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:paddingLeft="@dimen/standard_padding"
                 android:foregroundGravity="right"
                 android:padding="10dp"
+                android:paddingLeft="@dimen/standard_padding"
                 android:textColor="@color/white" />
 
         </LinearLayout>
@@ -60,13 +60,15 @@
             android:id="@+id/btnGoTo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Go To" />
+            android:background="@color/colorAccent"
+            android:text="Go To"
+            android:textColor="@color/white" />
 
         <ImageView
             android:id="@+id/imgClose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_launcher_round" />
+            android:src="@mipmap/icn_close_round" />
 
     </LinearLayout>
 
@@ -75,27 +77,32 @@
         android:id="@+id/layoutButton"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:gravity="center"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btnBack"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="back" />
+        <ImageView
+            android:id="@+id/imgBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:rotation="180"
+            android:layout_marginRight="@dimen/standard_margin"
+            android:src="@mipmap/icn_forward_round" />
 
         <ImageView
             android:id="@+id/imgSearch"
             android:layout_width="wrap_content"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_marginRight="@dimen/standard_margin"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_launcher_round" />
+            android:src="@mipmap/icn_search_round" />
 
-        <Button
-            android:id="@+id/btnNext"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="next" />
+        <ImageView
+            android:id="@+id/imgNext"
+            android:layout_marginLeft="@dimen/standard_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/icn_forward_round"
+            android:textColor="@color/white" />
 
     </LinearLayout>
 </LinearLayout>

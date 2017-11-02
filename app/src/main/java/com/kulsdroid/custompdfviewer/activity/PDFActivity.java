@@ -40,7 +40,7 @@ public class PDFActivity extends Activity implements View.OnClickListener, View.
     private Activity mActivity;
 
     private TouchImageView imgPdfView;
-    private Button btnBack, btnNext, btnGoTo;
+    private Button btnGoTo;
     private ParcelFileDescriptor fileDescriptor;
     private PdfRenderer pdfRenderer;
     private PdfRenderer.Page currentPage;
@@ -48,6 +48,7 @@ public class PDFActivity extends Activity implements View.OnClickListener, View.
     private ImageView imgSearch;
     private ImageView imgClose;
     private EditText etPageNumber;
+    private ImageView imgBack, imgNext;
 
     private LinearLayout linearSearch, linearButton;
     private int intSearchIndex;
@@ -67,7 +68,7 @@ public class PDFActivity extends Activity implements View.OnClickListener, View.
         setContentView(R.layout.activity_pdf);
         initialization();
 
-        if(checkPermission()){
+        if (checkPermission()) {
             openRenderer();
         }
 
@@ -79,8 +80,8 @@ public class PDFActivity extends Activity implements View.OnClickListener, View.
         mContext = PDFActivity.this;
         mActivity = PDFActivity.this;
 
-        btnBack = (Button) findViewById(R.id.btnBack);
-        btnNext = (Button) findViewById(R.id.btnNext);
+        imgBack = findViewById(R.id.imgBack);
+        imgNext = findViewById(R.id.imgNext);
         btnGoTo = (Button) findViewById(R.id.btnGoTo);
 
         txtTotalPage = (TextView) findViewById(R.id.txtTotalPage);
@@ -97,11 +98,11 @@ public class PDFActivity extends Activity implements View.OnClickListener, View.
         linearButton.setVisibility(View.VISIBLE);
 
         btnGoTo.setOnClickListener(this);
-        btnNext.setOnClickListener(this);
-        btnBack.setOnClickListener(this);
+        imgNext.setOnClickListener(this);
+        imgBack.setOnClickListener(this);
         imgSearch.setOnClickListener(this);
         imgClose.setOnClickListener(this);
-        mGestureDetector = new GestureDetector(mContext,new GestureListener());
+        mGestureDetector = new GestureDetector(mContext, new GestureListener());
         imgPdfView.setOnTouchListener(this);
 
         index = 0;
@@ -160,8 +161,8 @@ public class PDFActivity extends Activity implements View.OnClickListener, View.
         imgPdfView.setZoom(1);
         int index = currentPage.getIndex();
         int pageCount = pdfRenderer.getPageCount();
-        btnBack.setEnabled(0 != index);
-        btnNext.setEnabled(index + 1 < pageCount);
+        imgBack.setEnabled(0 != index);
+        imgNext.setEnabled(index + 1 < pageCount);
         txtTotalPage.setText(index + " of " + pageCount);
     }
 
@@ -169,10 +170,10 @@ public class PDFActivity extends Activity implements View.OnClickListener, View.
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btnNext:
+            case R.id.imgNext:
                 showPage(currentPage.getIndex() + 1);
                 break;
-            case R.id.btnBack:
+            case R.id.imgBack:
                 showPage(currentPage.getIndex() - 1);
                 break;
             case R.id.imgSearch:
@@ -214,7 +215,7 @@ public class PDFActivity extends Activity implements View.OnClickListener, View.
     @Override
     public boolean onTouch(View v, MotionEvent event) {
 
-        if(imgPdfView.getCurrentZoom() == 1){
+        if (imgPdfView.getCurrentZoom() == 1) {
             mGestureDetector.onTouchEvent(event);
         }
 
@@ -230,11 +231,11 @@ public class PDFActivity extends Activity implements View.OnClickListener, View.
             if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                 int pageCount = pdfRenderer.getPageCount();
                 if (currentPage.getIndex() + 1 < pageCount)
-                    btnNext.performClick();
+                    imgNext.performClick();
                 return false; // Right to left
             } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                 if ((0 != currentPage.getIndex()))
-                    btnBack.performClick();
+                    imgBack.performClick();
                 return false; // Left to right
             }
 
