@@ -115,6 +115,7 @@ public class PDFActivity extends Activity implements View.OnClickListener, View.
         String s = Environment.getExternalStorageDirectory() + "/.mycc/_pdfViewerTest2";
         File file = new File(s);
 
+
         try {
             fileDescriptor = ParcelFileDescriptor.open(
                     file, ParcelFileDescriptor.MODE_READ_ONLY);
