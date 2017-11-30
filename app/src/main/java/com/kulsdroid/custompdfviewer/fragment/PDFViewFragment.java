@@ -11,11 +11,14 @@ import android.os.ParcelFileDescriptor;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -58,6 +61,7 @@ public class PDFViewFragment extends Fragment implements View.OnClickListener, V
 
     private static final int SWIPE_MIN_DISTANCE = 120;
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+    private float scale;
 
     @Nullable
     @Override
@@ -72,6 +76,8 @@ public class PDFViewFragment extends Fragment implements View.OnClickListener, V
 
         mContext = getActivity();
         mActivity = getActivity();
+
+        scale = getContext().getResources().getDisplayMetrics().density;
 
         imgBack = mView.findViewById(R.id.imgBack);
         imgNext = mView.findViewById(R.id.imgNext);
@@ -102,14 +108,45 @@ public class PDFViewFragment extends Fragment implements View.OnClickListener, V
 
         index = 0;
 
-        hideControls();
+//        hideControls();
 
     }
+
+    private Bitmap scaleBitmap(Bitmap bitmap) {
+
+//        DisplayMetrics metrics = new DisplayMetrics();
+//        mActivity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+//
+//        int width = bitmap.getWidth();
+//        int height = bitmap.getHeight();
+//
+//        float scaleWidth = metrics.scaledDensity;
+//        float scaleHeight = metrics.scaledDensity;
+//// create a matrix for the manipulation
+//        Matrix matrix = new Matrix();
+//// resize the bit map
+//        matrix.postScale(scaleWidth, scaleHeight);
+//
+//// recreate the new Bitmap
+//        return Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
+
+        WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        float hight = displaymetrics.heightPixels;
+        float width = displaymetrics.widthPixels;
+        int convertHighet = (int) hight, convertWidth = (int) width;
+
+
+        return Bitmap.createScaledBitmap(bitmap, convertWidth, convertHighet, true);
+    }
+
 
     /**
      * You can hide your controls
      */
-    private void hideControls(){
+    private void hideControls() {
         linearControls.setVisibility(View.GONE);
         linearPageIndication.setVisibility(View.GONE);
     }
@@ -121,7 +158,7 @@ public class PDFViewFragment extends Fragment implements View.OnClickListener, V
     private void openRenderer() {
 
         //This is your file path. You need to set your pathfile over here.
-        String s = Environment.getExternalStorageDirectory() + "/.mycc/_pdfViewerTest2";
+        String s = Environment.getExternalStorageDirectory() + "/.mycc/bii_30bigtechpredictions_2017";
         File file = new File(s);
 
 
@@ -134,6 +171,28 @@ public class PDFViewFragment extends Fragment implements View.OnClickListener, V
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void showPage(int index) {
+        if (pdfRenderer.getPageCount() <= index) {
+            return;
+        }
+        if (null != currentPage) {
+            currentPage.close();
+        }
+        currentPage = pdfRenderer.openPage(index);
+//        Bitmap bitmap = Bitmap.createBitmap(
+//                currentPage.getWidth(),
+//                currentPage.getHeight(),
+//                Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(
+                getResources().getDisplayMetrics().densityDpi * currentPage.getWidth() / 72,
+                getResources().getDisplayMetrics().densityDpi * currentPage.getHeight() / 72,
+                Bitmap.Config.ARGB_8888);
+        currentPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+        imgPdfView.setImageBitmap(bitmap);
+        updateUIData();
     }
 
     @Override
@@ -162,21 +221,7 @@ public class PDFViewFragment extends Fragment implements View.OnClickListener, V
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void showPage(int index) {
-        if (pdfRenderer.getPageCount() <= index) {
-            return;
-        }
-        if (null != currentPage) {
-            currentPage.close();
-        }
-        currentPage = pdfRenderer.openPage(index);
-        Bitmap bitmap = Bitmap.createBitmap(currentPage.getWidth(), currentPage.getHeight(),
-                Bitmap.Config.ARGB_8888);
-        currentPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
-        imgPdfView.setImageBitmap(bitmap);
-        updateUIData();
-    }
+
 
     /**
      * This function updates UI
@@ -188,7 +233,7 @@ public class PDFViewFragment extends Fragment implements View.OnClickListener, V
         int pageCount = pdfRenderer.getPageCount();
         imgBack.setEnabled(0 != index);
         imgNext.setEnabled(index + 1 < pageCount);
-        txtTotalPage.setText((index+1) + " of " + pageCount);
+        txtTotalPage.setText((index + 1) + " of " + pageCount);
     }
 
     /**
