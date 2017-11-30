@@ -11,14 +11,11 @@ import android.os.ParcelFileDescriptor;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -112,36 +109,6 @@ public class PDFViewFragment extends Fragment implements View.OnClickListener, V
 
     }
 
-    private Bitmap scaleBitmap(Bitmap bitmap) {
-
-//        DisplayMetrics metrics = new DisplayMetrics();
-//        mActivity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-//
-//        int width = bitmap.getWidth();
-//        int height = bitmap.getHeight();
-//
-//        float scaleWidth = metrics.scaledDensity;
-//        float scaleHeight = metrics.scaledDensity;
-//// create a matrix for the manipulation
-//        Matrix matrix = new Matrix();
-//// resize the bit map
-//        matrix.postScale(scaleWidth, scaleHeight);
-//
-//// recreate the new Bitmap
-//        return Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
-
-        WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        float hight = displaymetrics.heightPixels;
-        float width = displaymetrics.widthPixels;
-        int convertHighet = (int) hight, convertWidth = (int) width;
-
-
-        return Bitmap.createScaledBitmap(bitmap, convertWidth, convertHighet, true);
-    }
-
 
     /**
      * You can hide your controls
@@ -182,10 +149,6 @@ public class PDFViewFragment extends Fragment implements View.OnClickListener, V
             currentPage.close();
         }
         currentPage = pdfRenderer.openPage(index);
-//        Bitmap bitmap = Bitmap.createBitmap(
-//                currentPage.getWidth(),
-//                currentPage.getHeight(),
-//                Bitmap.Config.ARGB_8888);
         Bitmap bitmap = Bitmap.createBitmap(
                 getResources().getDisplayMetrics().densityDpi * currentPage.getWidth() / 72,
                 getResources().getDisplayMetrics().densityDpi * currentPage.getHeight() / 72,
